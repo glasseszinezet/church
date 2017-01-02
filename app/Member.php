@@ -52,20 +52,20 @@ class Member extends Model
     }
 
 
-    private function formatMSISDN($msisdn)
+    public static function formatMSISDN($msisdn)
     {
-        if (starts_with($msisdn,"00234"))
+        if (starts_with($msisdn,"00233"))
         {
             $msisdn = "+".substr($msisdn,2);
-        }if (starts_with($msisdn,"0234"))
+        }if (starts_with($msisdn,"0233"))
         {
             $msisdn = "+".substr($msisdn,1);
-        }if (starts_with($msisdn,"234"))
+        }if (starts_with($msisdn,"233"))
         {
             $msisdn = "+".$msisdn;
         }if (starts_with($msisdn,"0"))
         {
-            $msisdn = "+234".substr($msisdn,1);
+            $msisdn = "+233".substr($msisdn,1);
         }
 
 

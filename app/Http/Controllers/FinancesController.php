@@ -128,7 +128,11 @@ class FinancesController extends Controller
 
                     $tithe = Tithe::create($request->all());
                     $request->session()->flash("success","Tithe Recorded Successfully!!");
-//                    ActivityLogger::create(['user_id' => Auth::User()->id, 'logMessage' =>"Recorded tithe with id : ".$tithe->id]);
+
+                    $member = Member::find($request->input('member_id'));
+                    $message = str_replace("@@currency@@",Currency::find($request->input('currency_id'))->ISO_4217_CODE,str_replace("@@amount@@",$request->input('amount'),str_replace("@@first_name@@", $member->firstName,config("SaproConf.messages.tithe"))));
+                    NotificationsController::sendSMS($message,array(Member::formatMSISDN($member->phone)));
+
                     $this->dispatch(new \App\Jobs\ActivityLogger(Auth::User()->id,"Recorded tithe with id : ".$tithe->id));
                 }
                 else
@@ -139,9 +143,14 @@ class FinancesController extends Controller
             case 'welfare':
                 if((bool)Auth::User()->privileges()->get()[0]->sendSMSNotifications)
                 {
-                  $welfare =  Welfare::create($request->all());
+                    $welfare =  Welfare::create($request->all());
                     $request->session()->flash("success","Welfare Recorded Successfully!!");
-//                    ActivityLogger::create(['user_id' => Auth::User()->id, 'logMessage' =>"Recorded Welfare with id ".$welfare->id]);
+
+
+                    $member = Member::find($request->input('member_id'));
+                    $message = str_replace("@@currency@@",Currency::find($request->input('currency_id'))->ISO_4217_CODE,str_replace("@@amount@@",$request->input('amount'),str_replace("@@first_name@@", $member->firstName,config("SaproConf.messages.welfare"))));
+                    NotificationsController::sendSMS($message,array(Member::formatMSISDN($member->phone)));
+
                     $this->dispatch(new \App\Jobs\ActivityLogger(Auth::User()->id,"Recorded Welfare with id ".$welfare->id));
                 }
                 else
@@ -154,7 +163,12 @@ class FinancesController extends Controller
                 {
                     $pledge = Pledge::create($request->all());
                     $request->session()->flash("success","Pledge Recorded Successfully!!");
-//                    ActivityLogger::create(['user_id' => Auth::User()->id, 'logMessage' =>"Recorded Pledge with id : ".$pledge->id]);
+
+                    $member = Member::find($request->input('member_id'));
+                    $message = str_replace("@@currency@@",Currency::find($request->input('currency_id'))->ISO_4217_CODE,str_replace("@@amount@@",$request->input('amount'),str_replace("@@first_name@@", $member->firstName,config("SaproConf.messages.pledge"))));
+                    NotificationsController::sendSMS($message,array(Member::formatMSISDN($member->phone)));
+
+
                     $this->dispatch(new \App\Jobs\ActivityLogger(Auth::User()->id,"Recorded Pledge with id : ".$pledge->id));
                 }
                 else
@@ -167,7 +181,12 @@ class FinancesController extends Controller
                 {
                     $offertory = Offertory::create($request->all());
                     $request->session()->flash("success","Offertory Recorded Successfully!!");
-//                    ActivityLogger::create(['user_id' => Auth::User()->id, 'logMessage' =>"Added Offertory with id: ".$offertory->id]);
+
+
+
+                    $message = str_replace("@@currency@@",Currency::find($request->input('currency_id'))->ISO_4217_CODE,str_replace("@@amount@@",$request->input('amount'),str_replace("@@time@@", date('Y-m-d H:i:s'),config("SaproConf.messages.offertory"))));
+                    NotificationsController::sendSMS($message,config("SaproConf.alerts.offertory"));
+
                     $this->dispatch(new \App\Jobs\ActivityLogger(Auth::User()->id,"Added Offertory with id: ".$offertory->id));
                 }
                 else
@@ -183,7 +202,12 @@ class FinancesController extends Controller
 
                     $donation = Donation::create($request->all());
                     $request->session()->flash("success","Donation Recorded Successfully!!");
-//                    ActivityLogger::create(['user_id' => Auth::User()->id, 'logMessage' =>"Recorded donation with id : ".$donation->id]);
+
+
+                    $member = Member::find($request->input('member_id'));
+                    $message = str_replace("@@currency@@",Currency::find($request->input('currency_id'))->ISO_4217_CODE,str_replace("@@amount@@",$request->input('amount'),str_replace("@@first_name@@", $member->firstName,config("SaproConf.messages.donation"))));
+                    NotificationsController::sendSMS($message,array(Member::formatMSISDN($member->phone)));
+
                     $this->dispatch(new \App\Jobs\ActivityLogger(Auth::User()->id,"Recorded donation with id : ".$donation->id));
                 }
                 else
@@ -197,7 +221,11 @@ class FinancesController extends Controller
                 {
                     $expenditure = Expenditure::create($request->all());
                     $request->session()->flash("success","Expenditure Recorded Successfully!!");
-//                    ActivityLogger::create(['user_id' => Auth::User()->id, 'logMessage' =>"Added Expenditure with Id: ".$expenditure->id]);
+
+                    $message = str_replace("@@currency@@",Currency::find($request->input('currency_id'))->ISO_4217_CODE,str_replace("@@amount@@",$request->input('amount'),str_replace("@@time@@", date('Y-m-d H:i:s'),config("SaproConf.messages.expenditure"))));
+                    NotificationsController::sendSMS($message,config("SaproConf.alerts.expenditure"));
+
+
                     $this->dispatch(new \App\Jobs\ActivityLogger(Auth::User()->id,"Added Expenditure with Id: ".$expenditure->id));
                 }
                 else
@@ -225,7 +253,12 @@ class FinancesController extends Controller
             {
                 $pledge->redeemed = true;
                 $pledge->save();
-//                ActivityLogger::create(['user_id' => Auth::User()->id, 'logMessage' =>"Redeemed Pledge with id:  ".$pledge->id]);
+
+                $member = Member::find($pledge->member_id);
+                $message = str_replace("@@currency@@",$pledge->currency->ISO_4217_CODE,str_replace("@@amount@@",$pledge->amount,str_replace("@@first_name@@", $member->firstName,config("SaproConf.messages.pledge_redeem"))));
+                NotificationsController::sendSMS($message,array(Member::formatMSISDN($member->phone)));
+
+
                 $this->dispatch(new \App\Jobs\ActivityLogger(Auth::User()->id,"Redeemed Pledge with id:  ".$pledge->id));
                 $request->session()->flash("success","Pledge has Redeemed successfully. !!!");
                 return redirect()->back();

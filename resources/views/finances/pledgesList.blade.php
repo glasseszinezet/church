@@ -18,7 +18,7 @@
 @endsection
 @section('content')
 
-    @if(isset($pledges) && !empty($pledges) && $pledges->count() > 0)
+    @if(isset($pledges) && !empty($pledges) && $pledges->count() > 0 && !empty($tableContextClasses))
         <div class="row">
             <table class="table table-hover table-responsive">
                 <thead>
@@ -34,14 +34,15 @@
                 </tr>
                 </thead>
                 <tbody>
-
+                {{isset($tableContextClasses)}}
                 @php($iterator = 0)
+
                 @foreach($pledges as $pledge)
                     <tr class="{{ $tableContextClasses[$iterator++] }}">
                         <td>{{$loop->iteration}}</td>
                         <td>{{$pledge->amount}}</td>
                         <td>{{$pledge->currency->name." (".$pledge->currency->ISO_4217_CODE.")"}}</td>
-                        <td>{{$pledge->member->firstName." ".$pledge->member->otherNames." ".$pledge->member->lastName}}</td>
+                        <td>{{ $pledge->member->firstName ." ". $pledge->member->otherNames ." ".$pledge->member->lastName}}</td>
                         <td>{{$pledge->member->phone}}</td>
                         <td>{{$pledge->created_at}}</td>
                         <td>{{($pledge->redeemed) ? "YES" : "NO"}}</td>

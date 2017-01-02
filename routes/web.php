@@ -32,17 +32,18 @@ Route::get('sessions',function (\Illuminate\Http\Request $request){
         return null;
 })->middleware('auth');
 
-Route::get("/hi",function (){
-//    return view('errors.401');
-    return Auth::User()->privileges()->get()[0]->viewMembershipList;
-});
-Route::get('mail',function (){
-    return view("mails.notifications")->with(["churchDetails" => App\Church::findOrFail(1), "member" => Auth::user()->name, "message" => "This is to inform you that our mid-week service has been moved from 6 pm to 9:45 pm.
-     Also Note that they'll be a second collection to help build a school for some school. :)"]);
-});
-Route::get("voice",function (){
-   \App\Http\Controllers\NotificationsController::sendVoice("Hello Eugene How was your day.",null,[233541859113]);
-});
+
+//Route::get("/hi",function (){
+////    return view('errors.401');
+//    return Auth::User()->privileges()->get()[0]->viewMembershipList;
+//});
+//Route::get('mail',function (){
+//    return view("mails.notifications")->with(["churchDetails" => App\Church::findOrFail(1), "member" => Auth::user()->name, "message" => "This is to inform you that our mid-week service has been moved from 6 pm to 9:45 pm.
+//     Also Note that they'll be a second collection to help build a school for some school. :)"]);
+//});
+//Route::get("voice",function (){
+//   \App\Http\Controllers\NotificationsController::sendVoice("Hello Eugene How was your day.",null,[233541859113]);
+//});
 
 
 
